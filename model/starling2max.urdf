@@ -4,7 +4,7 @@
 
     <properties
         kf="3.929309999999999e-08"
-        km="3.536378999999999e-09"
+        km="5.893964999999999e-10"
     />
 
     <material name="green">
@@ -40,12 +40,12 @@
 
     <link name="prop0_link">
         <inertial>
-            <origin rpy="0.0 0.0 0.0" xyz="0.095 0.13 0.024"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <mass value="0"/>
             <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
         </inertial>
         <visual>
-            <origin rpy="0.0 0.0 0.0" xyz="0.095 0.13 0.024"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="./Starling2Max7040Prop.obj" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -53,18 +53,19 @@
         </visual>
     </link>
     <joint name="prop0_joint" type="fixed">
+        <origin rpy="0.0 0.0 0.0" xyz="0.095 0.13 0.024"/>
         <parent link="base_link"/>
         <child link="prop0_link"/>
     </joint>
 
     <link name="prop1_link">
         <inertial>
-            <origin rpy="0.0 0.0 0.0" xyz="0.095 -0.13 0.024"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <mass value="0"/>
             <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
         </inertial>
         <visual>
-            <origin rpy="0.0 0.0 0.0" xyz="0.095 -0.13 0.024"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="./Starling2Max7040Prop.obj" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -72,18 +73,19 @@
         </visual>
     </link>
     <joint name="prop1_joint" type="fixed">
+        <origin rpy="0.0 0.0 0.0" xyz="0.095 -0.13 0.024"/>
         <parent link="base_link"/>
         <child link="prop1_link"/>
     </joint>
 
     <link name="prop2_link">
         <inertial>
-            <origin rpy="0.0 0.0 0.0" xyz="-0.095 -0.13 0.024"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <mass value="0"/>
             <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
         </inertial>
         <visual>
-            <origin rpy="0.0 0.0 0.0" xyz="-0.095 -0.13 0.024"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="./Starling2Max7040Prop.obj" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -91,18 +93,19 @@
         </visual>
     </link>
     <joint name="prop2_joint" type="fixed">
+        <origin rpy="0.0 0.0 0.0" xyz="-0.095 -0.13 0.024"/>
         <parent link="base_link"/>
         <child link="prop2_link"/>
     </joint>
 
     <link name="prop3_link">
         <inertial>
-            <origin rpy="0.0 0.0 0.0" xyz="-0.095 0.13 0.024"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <mass value="0"/>
             <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
         </inertial>
         <visual>
-            <origin rpy="0.0 0.0 0.0" xyz="-0.095 0.13 0.024"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="./Starling2Max7040Prop.obj" scale="0.001 0.001 0.001"/>
             </geometry>
@@ -110,6 +113,7 @@
         </visual>
     </link>
     <joint name="prop3_joint" type="fixed">
+        <origin rpy="0.0 0.0 0.0" xyz="-0.095 0.13 0.024"/>
         <parent link="base_link"/>
         <child link="prop3_link"/>
     </joint>

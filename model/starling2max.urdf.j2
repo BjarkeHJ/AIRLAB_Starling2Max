@@ -40,12 +40,12 @@
 
     <link name="prop0_link">
         <inertial>
-            <origin rpy="0.0 0.0 0.0" xyz="{{ prop0 }}"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <mass value="0"/>
             <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
         </inertial>
         <visual>
-            <origin rpy="0.0 0.0 0.0" xyz="{{ prop0 }}"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="./Starling2Max7040Prop.obj" scale="{{ scale_x }} {{ scale_y }} {{ scale_z }}"/>
             </geometry>
@@ -53,18 +53,19 @@
         </visual>
     </link>
     <joint name="prop0_joint" type="fixed">
+        <origin rpy="0.0 0.0 0.0" xyz="{{ prop0 }}"/>
         <parent link="base_link"/>
         <child link="prop0_link"/>
     </joint>
 
     <link name="prop1_link">
         <inertial>
-            <origin rpy="0.0 0.0 0.0" xyz="{{ prop1 }}"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <mass value="0"/>
             <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
         </inertial>
         <visual>
-            <origin rpy="0.0 0.0 0.0" xyz="{{ prop1 }}"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="./Starling2Max7040Prop.obj" scale="{{ scale_x }} {{ scale_y }} {{ scale_z }}"/>
             </geometry>
@@ -72,18 +73,19 @@
         </visual>
     </link>
     <joint name="prop1_joint" type="fixed">
+        <origin rpy="0.0 0.0 0.0" xyz="{{ prop1 }}"/>
         <parent link="base_link"/>
         <child link="prop1_link"/>
     </joint>
 
     <link name="prop2_link">
         <inertial>
-            <origin rpy="0.0 0.0 0.0" xyz="{{ prop2 }}"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <mass value="0"/>
             <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
         </inertial>
         <visual>
-            <origin rpy="0.0 0.0 0.0" xyz="{{ prop2 }}"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="./Starling2Max7040Prop.obj" scale="{{ scale_x }} {{ scale_y }} {{ scale_z }}"/>
             </geometry>
@@ -91,18 +93,19 @@
         </visual>
     </link>
     <joint name="prop2_joint" type="fixed">
+        <origin rpy="0.0 0.0 0.0" xyz="{{ prop2 }}"/>
         <parent link="base_link"/>
         <child link="prop2_link"/>
     </joint>
 
     <link name="prop3_link">
         <inertial>
-            <origin rpy="0.0 0.0 0.0" xyz="{{ prop3 }}"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <mass value="0"/>
             <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0"/>
         </inertial>
         <visual>
-            <origin rpy="0.0 0.0 0.0" xyz="{{ prop3 }}"/>
+            <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
             <geometry>
                 <mesh filename="./Starling2Max7040Prop.obj" scale="{{ scale_x }} {{ scale_y }} {{ scale_z }}"/>
             </geometry>
@@ -110,6 +113,7 @@
         </visual>
     </link>
     <joint name="prop3_joint" type="fixed">
+        <origin rpy="0.0 0.0 0.0" xyz="{{ prop3 }}"/>
         <parent link="base_link"/>
         <child link="prop3_link"/>
     </joint>

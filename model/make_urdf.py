@@ -18,9 +18,9 @@ VBAT_MAX = 16.8
 VBAT_NOM = 14.8
 T2W = 2.5  # rough target, not from datasheet - used only as a sanity check below
 PROP_RADIUS = 0.09 #[m] (180mm diameter, tri-blade)
-# Static thrust coefficient for a moderate-pitch tri-blade 180mm prop.
-# Typical measured values for this prop class run ~0.09-0.13; 0.11 is a
-# mid-range estimate absent real thrust-stand/UIUC data for this specific prop.
+# Reaction torque / thrust [m]. Static prop: Q/T = Cp / (2*pi*Ct) * D; Cp/Ct ~ 0.5 gives
+# ~0.015 m for D = 0.18 m. Estimate - replace with thrust-stand torque data for the 7040 prop.
+PROP_KM_RATIO = 0.015
 PROP_CT = 0.11
 RHO_AIR = 1.225  # kg/m^3
 
@@ -58,7 +58,7 @@ def box_inertia(mass: float, size_x: float, size_y: float, size_z: float) -> tup
     return ixx, iyy, izz
 
 def coefs(
-    mass: float, nrot: int, thrust2weight: float, prop_radius: float, prop_ct: float, rho: float
+    mass: float, nrot: int, thrust2weight: float, prop_radius: float, prop_ct: float, prop_km_ratio: float, rho: float
 ) -> tuple[float, float]:
     g = 9.82
 
@@ -68,10 +68,8 @@ def coefs(
     prop_diameter = 2 * prop_radius
     kf = prop_ct * rho * prop_diameter**4 / 3600.0
 
-    # Rough estimate absent measured propeller torque data: km/kf has units
-    # of length and is on the order of the propeller radius (cross-checked
-    # against CF2X reference values: km/kf = 0.0251 m vs its 0.0255 m prop radius).
-    km = kf * prop_radius
+    # Q = km * RPM² and Q = prop_km_ratio * T, so km = kf * prop_km_ratio
+    km = kf * prop_km_ratio
 
     # Sanity check: RPM (and fraction of no-load KV*Vbat_max) needed to hit
     # the target thrust-to-weight, for comparison against a plausible loaded derate.
@@ -88,7 +86,7 @@ def coefs(
 
 def generate() -> str:
     ixx, iyy, izz = box_inertia(MASS, SIZE_X, SIZE_Y, SIZE_Z)
-    kf, km = coefs(MASS, NROT, T2W, PROP_RADIUS, PROP_CT, RHO_AIR)
+    kf, km = coefs(MASS, NROT, T2W, PROP_RADIUS, PROP_CT, PROP_KM_RATIO, RHO_AIR)
 
     with open(os.path.join(SCRIPT_DIR, "starling2max.urdf.j2")) as f:
         template = jinja2.Template(f.read(), undefined=jinja2.StrictUndefined)

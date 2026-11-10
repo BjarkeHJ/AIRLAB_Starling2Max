@@ -3,12 +3,12 @@
 <sdf version='1.9'>
     <model name='{{ name }}'>
         <include merge='true'>
-            <uri>mode://{{ base_model }}</uri>
+            <uri>model://{{ base_model }}</uri>
         </include>
 
         {% for rotor in rotors %}
         <!-- motor {{ rotor.index }}: {{ rotor.name }}, {{ rotor.direction }} -->
-        <plugin filename="gz-sim-multicoptor-motor-model-system" name="gz::sim::systems::MulticopterModel">
+        <plugin filename="gz-sim-multicopter-motor-model-system" name="gz::sim::systems::MulticopterMotorModel">
             <jointName>rotor_{{ rotor.index }}_joint</jointName>
             <linkName>rotor_{{ rotor.index }}</linkName>
             <turningDirection>{{ rotor.direction }}</turningDirection>

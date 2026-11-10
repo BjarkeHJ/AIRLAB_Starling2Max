@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "starling2max"
+version = "0.1.0"
+description = "ModalAI Starling 2 Max simulation model for GenesisWorld and Gazebo/PX4"
+requires-python = ">=3.10"
+dependencies = ["pyyaml", "jinja2"]
+
+[project.scripts]
+starling2max-generate = "starling2max.generate:main"
+
+[tool.setuptools]
+packages = ["starling2max"]
+
+[tool.setuptool.package-data]
+starling2max = ["templates/**/*.j2]

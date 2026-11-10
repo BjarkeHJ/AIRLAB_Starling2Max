@@ -1,0 +1,8 @@
+# config/variants/tether.yaml
+name: starling2max_tether
+frames:
+  attach0: {xyz: [0.0289, 0.0, -0.02]}
+  attach1: {xyz: [-0.0144, 0.025, -0.02]}
+  attach2: {xyz: [-0.0144, -0.025, -0.02]}
+gazebo:
+  ground_truth_topic: /starling2max_tether/gt/odom

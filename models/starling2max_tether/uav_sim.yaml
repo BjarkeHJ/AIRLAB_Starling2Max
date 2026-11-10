@@ -10,4 +10,4 @@ spawn:
 sensors:
     gt_odom:
         type: odometry
-        gz_topic: /starling2max_tether/gt/odoms
+        gz_topic: /starling2max_tether/gt/odom

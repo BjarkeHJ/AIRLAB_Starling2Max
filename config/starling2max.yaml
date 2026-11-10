@@ -1,0 +1,45 @@
+# config/starling2max.yaml
+
+name: starling2max
+
+body:
+  mass: 0.566 # [kg] - from datasheet, includes props
+  bbox: [0.217, 0.287, 0.129] # [m] - measured from mesh, collision box + inertia
+  mesh: Starling2Max_body.obj
+
+propulsion:
+  rotor_offset: [0.095, 0.130, 0.024] # [m] - flu, mirrored to all four arms
+  prop: {
+    mesh: Starling2Max_7040prop.obj,
+    radius: 0.09,
+    mass: 0.008,
+    ct: 0.11,
+    km_ratio: 0.015
+  }
+  motor: {
+    kv: 1500,
+    vbat_max: 16.8
+  }
+  rotors:
+    front_left: {spin: cw, color: green}
+    front_right: {spin: ccw, color: green}
+    rear_left: {spin: ccw, color: red}
+    rear_right: {spin: cw, color: red}
+  
+frames: {} # extra named frames, filled by variants
+
+# per-target sections: only what that simulator needs
+genesis:
+  rotor_order: [front_left, front_right, rear_right, rear_left] # prop0, ..., prop3
+
+gazebo:
+  spawn_z: 0.07
+  max_rot_velocity: 1000 # PX4 SIM_GZ_EC_MAX is limited to 1000
+  min_rot_velocity: 150
+  time_constants: {up: 0.0125, down: 0.025}
+  ground_truth_topic: /starling2max/gt/odom
+
+px4:
+  airframe_id: 4900
+  rotor_order: [front_right, rear_left, front_left, rear_right] # PX4 quad-X
+  params: {NAV_DLL_ACT: 0} # No need for QGC in sim - toggle '1' if wanted

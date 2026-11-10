@@ -1,0 +1,2 @@
+prepend-non-duplicate;GZ_SIM_RESOURCE_PATH;share/@PROJECT_NAME@/models
+set;STARLING2MAX_CONFIG_DIR;share/@PROJECT_NAME@/config

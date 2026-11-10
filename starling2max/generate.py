@@ -131,6 +131,7 @@ def render_all() -> dict[Path, str]:
         files[out / "model.sdf"] = render("sdf/flight.sdf.j2", p)
         files[out / "model.urdf"] = render("urdf/model.urdf.j2", p)
         files[out / "model.config"] = render("sdf/model.config.j2", p, model=name)
+        files[out / "uav_sim.yaml"] = render("uav_sim.yaml.j2", p)
     return files
 
 def write(root: Path) -> None:
@@ -147,7 +148,7 @@ def check(root: Path) -> list[Path]:
     stale = []
     for rel, text in render_all().items():
         path = root / rel
-        old = path.read_text() if path.exists else ""
+        old = path.read_text() if path.exists() else ""
         if old != text:
             stale.append(rel)
             sys.stdout.writelines(difflib.unified_diff(

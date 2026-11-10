@@ -166,7 +166,7 @@
                 <geometry>
                     <mesh>
                         <scale>0.001 0.001 0.001</scale>
-                        <uri>mode://starling2max_base/meshes/Starling2Max_7040prop.obj</uri>
+                        <uri>model://starling2max_base/meshes/Starling2Max_7040prop.obj</uri>
                     </mesh>
                 </geometry>
                 <material>
@@ -209,7 +209,7 @@
                 <geometry>
                     <mesh>
                         <scale>0.001 0.001 0.001</scale>
-                        <uri>mode://starling2max_base/meshes/Starling2Max_7040prop.obj</uri>
+                        <uri>model://starling2max_base/meshes/Starling2Max_7040prop.obj</uri>
                     </mesh>
                 </geometry>
                 <material>
@@ -252,7 +252,7 @@
                 <geometry>
                     <mesh>
                         <scale>0.001 0.001 0.001</scale>
-                        <uri>mode://starling2max_base/meshes/Starling2Max_7040prop.obj</uri>
+                        <uri>model://starling2max_base/meshes/Starling2Max_7040prop.obj</uri>
                     </mesh>
                 </geometry>
                 <material>
@@ -295,7 +295,7 @@
                 <geometry>
                     <mesh>
                         <scale>0.001 0.001 0.001</scale>
-                        <uri>mode://starling2max_base/meshes/Starling2Max_7040prop.obj</uri>
+                        <uri>model://starling2max_base/meshes/Starling2Max_7040prop.obj</uri>
                     </mesh>
                 </geometry>
                 <material>

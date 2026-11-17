@@ -76,7 +76,7 @@
         </plugin>
 
         <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
-            <odom_topic>/starling2max_tether/gt/odom</odom_topic>
+            <odom_topic>/starling2max_tether/drone/odom</odom_topic>
             <odom_frame>world</odom_frame>
             <robot_base_frame>base_link</robot_base_frame>
             <dimensions>3</dimensions>
@@ -86,10 +86,204 @@
             <pose relative_to="base_link">0.0289 0 -0.02 0 0 0</pose>
         </frame>
         <frame name="attach1" attached_to="base_link">
-            <pose relative_to="base_link">-0.0144 0.025 -0.02 0 0 0</pose>
+            <pose relative_to="base_link">-0.01445 0.0250281 -0.02 0 0 0</pose>
         </frame>
         <frame name="attach2" attached_to="base_link">
-            <pose relative_to="base_link">-0.0144 -0.025 -0.02 0 0 0</pose>
+            <pose relative_to="base_link">-0.01445 -0.0250281 -0.02 0 0 0</pose>
         </frame>
+
+<!-- slung payload: free body (no joint), held only by TetherPlugin.
+     Nested model so it gets its own OdometryPublisher (that plugin reports the
+     pose of the model it is attached to, i.e. its canonical link) -->
+<model name="payload">
+<pose>0.5 0 0.025 0 0 0</pose>
+<link name="payload">
+    <inertial>
+        <mass>0.4</mass>
+        <inertia>
+            <ixx>0.00141667</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.00141667</iyy>
+            <iyz>0</iyz>
+            <izz>0.00266667</izz>
+        </inertia>
+    </inertial>
+    <collision name="collision">
+        <geometry>
+            <box>
+                <size>
+                    0.2 0.2 0.05
+                </size>
+            </box>
+        </geometry>
+    </collision>
+    <visual name="body">
+        <pose>
+            0 0 0
+            0 0 0
+        </pose>
+        <geometry>
+            <box>
+                <size>
+                    0.2 0.2 0.05
+                </size>
+            </box>
+        </geometry>
+        <material>
+            <ambient>
+                0 0 0.8 1
+            </ambient>
+            <diffuse>
+                0 0 0.8 1
+            </diffuse>
+        </material>
+    </visual>
+    <visual name="top_panel">
+        <pose>
+            0 0 0.027
+            0 0 0
+        </pose>
+        <geometry>
+            <box>
+                <size>
+                    0.2 0.2 0.004
+                </size>
+            </box>
+        </geometry>
+        <material>
+            <ambient>
+                0.8 0 0 1
+            </ambient>
+            <diffuse>
+                0.8 0 0 1
+            </diffuse>
+        </material>
+    </visual>
+    <visual name="arrow_shaft">
+        <pose>
+            -0.0105 0 0.034
+            0 0 0
+        </pose>
+        <geometry>
+            <box>
+                <size>
+                    0.049 0.0084 0.01
+                </size>
+            </box>
+        </geometry>
+        <material>
+            <ambient>
+                0 0.8 0 1
+            </ambient>
+            <diffuse>
+                0 0.8 0 1
+            </diffuse>
+        </material>
+    </visual>
+    <visual name="arrow_head">
+        <pose>
+            0.0245 0 0.034
+            0 0 0.785398
+        </pose>
+        <geometry>
+            <box>
+                <size>
+                    0.021 0.021 0.01
+                </size>
+            </box>
+        </geometry>
+        <material>
+            <ambient>
+                0 0.8 0 1
+            </ambient>
+            <diffuse>
+                0 0.8 0 1
+            </diffuse>
+        </material>
+    </visual>
+</link>
+
+<plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+    <odom_topic>/starling2max_tether/payload/odom</odom_topic>
+    <odom_frame>world</odom_frame>
+    <robot_base_frame>payload</robot_base_frame>
+    <dimensions>3</dimensions>
+</plugin>
+</model>
+
+<plugin filename="TetherPlugin" name="tether_plugin::TetherPlugin">
+    <drone_link>base_link</drone_link>
+    <payload_link>payload::payload</payload_link>
+    <rest_length>
+        3
+    </rest_length>
+    <stiffness>
+        1500
+    </stiffness>
+    <damping>
+        200
+    </damping>
+    <torsional_damping>
+        0.0002
+    </torsional_damping>
+    <gate_tension>
+        0.3
+    </gate_tension>
+    <cable>
+        <drone_attach>
+            0.0289 0 -0.02
+        </drone_attach>
+        <payload_attach>
+            0.09 0 0.025
+        </payload_attach>
+    </cable>
+    <cable>
+        <drone_attach>
+            -0.01445 0.0250281 -0.02
+        </drone_attach>
+        <payload_attach>
+            -0.045 0.0779423 0.025
+        </payload_attach>
+    </cable>
+    <cable>
+        <drone_attach>
+            -0.01445 -0.0250281 -0.02
+        </drone_attach>
+        <payload_attach>
+            -0.045 -0.0779423 0.025
+        </payload_attach>
+    </cable>
+</plugin>
+
+<plugin filename="TetherVisual" name="tether_plugin::TetherVisual">
+    <drone_link>base_link</drone_link>
+    <payload_link>payload::payload</payload_link>
+    <rest_length> 3</rest_length>
+    <cable>
+        <drone_attach>
+            0.0289 0 -0.02
+        </drone_attach>
+        <payload_attach>
+            0.09 0 0.025
+        </payload_attach>
+    </cable>
+    <cable>
+        <drone_attach>
+            -0.01445 0.0250281 -0.02
+        </drone_attach>
+        <payload_attach>
+            -0.045 0.0779423 0.025
+        </payload_attach>
+    </cable>
+    <cable>
+        <drone_attach>
+            -0.01445 -0.0250281 -0.02
+        </drone_attach>
+        <payload_attach>
+            -0.045 -0.0779423 0.025
+        </payload_attach>
+    </cable>
+</plugin>
     </model>
 </sdf>

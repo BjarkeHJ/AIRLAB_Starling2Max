@@ -2,15 +2,16 @@
 
 import argparse
 import copy
-import difflib
 import sys
 import os
 from pathlib import Path
-import jinja2
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from starling2max.params import REPO_ROOT, derive, load_params, model_names
+
+from starling2max import drone, tether
+from starling2max.params import REPO_ROOT, load_params, model_names
+from starling2max.render import check, make_env, write
 from starling2max.rotors import rotors_for
 
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
@@ -18,60 +19,16 @@ MODELS = Path("models")
 AIRFRAMES = Path("px4") / "airframes"
 MESH_SCALE = (0.001, 0.001, 0.001)  # meshes are in mm
 
-COLORS = {
-    "grey": (0.1, 0.1, 0.1, 1.0),
-    "green": (0.0, 0.8, 0.0, 1.0),
-    "red": (0.8, 0.0, 0.0, 1.0),
-}
-
 # Keys a variant may change. Everything else is baked into the shared
 # starling2max_base SDF and the single PX4 airframe.
-VARIANTS_KEYS = {"name", "frames", "gazebo.ground_truth_topic"}
+VARIANTS_KEYS = {"name", "frames",  "tether", "payload", "gazebo.drone_odom_topic", "gazebo.payload_odom_topic"}
 
-# Formatting filters...
-def num(v, digits: int = 6) -> str:
-    return f"{float(v):.{digits}g}"
-
-def vec(values, digits: int = 6) -> str:
-    return " ".join(num(v, digits) for  v in  values)
-
-def rgba(color: str) -> str:
-    return vec(COLORS[color])
-
-def make_env() -> jinja2.Environment:
-    env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(TEMPLATE_DIR),
-        undefined=jinja2.StrictUndefined,
-        keep_trailing_newline=True,
-        trim_blocks=True,
-        lstrip_blocks=True,
-    )
-    env.filters.update(num=num, vec=vec, rgba=rgba)
-    return env
-
-# Context...
-def px4_rotors(p: dict) -> list[dict]:
-    """ Rotors in PX4 order. Gazebo rotor_N / motorNumber N and SIM_GZ_EC_FUNC(N+1) all use this same order."""
-    km_ratio = p["propulsion"]["prop"]["km_ratio"]
-    out = []
-    for i, r in enumerate(rotors_for(p, "px4")):
-        ca_px, ca_py, _ = r.xyz_frd
-        out.append({
-            "index": i,
-            "name": r.name,
-            "xyz": r.xyz,
-            "direction": r.spin,
-            "color": r.color,
-            "ca_px": ca_px,
-            "ca_py": ca_py,
-            "ca_km": r.spin_sign * km_ratio
-        })
-    return out
 
 def context(p: dict, base_model: str) -> dict:
     gz = p["gazebo"]
     return {
-        **derive(p),          # kf, km, motor_constant, base_mass, base_inertia, prop_*, ...
+        **drone.derive(p),
+        **tether.derive(p),
         "p": p,
         "name": p["name"],
         "base_model": base_model,
@@ -79,15 +36,16 @@ def context(p: dict, base_model: str) -> dict:
         "body_mesh": p["body"]["mesh"],
         "prop_mesh": p["propulsion"]["prop"]["mesh"],
         "bbox": p["body"]["bbox"],
-        "frames": p["frames"] or {},
-        "rotors": px4_rotors(p),                       # SDF + airframe
-        "genesis_rotors": rotors_for(p, "genesis"),    # URDF prop0..prop3
+        "frames": {**(p["frames"] or {}), **tether.attach_frames(p)},
+        "rotors": drone.px4_rotors(p),
+        "genesis_rotors": rotors_for(p, "genesis"),
         "spawn_z": gz["spawn_z"],
         "max_rot_velocity": gz["max_rot_velocity"],
         "min_rot_velocity": gz["min_rot_velocity"],
         "time_constant_up": gz["time_constants"]["up"],
         "time_constant_down": gz["time_constants"]["down"],
-        "ground_truth_topic": gz["ground_truth_topic"],
+        "drone_odom_topic": gz["drone_odom_topic"],
+        "payload_odom_topic": gz.get("payload_odom_topic"), # tether variants only (tether.REQUIRED)
         "airframe_id": p["px4"]["airframe_id"],
         "px4_params": p["px4"]["params"],
     }
@@ -132,37 +90,21 @@ def render_all() -> dict[Path, str]:
         files[out / "model.urdf"] = render("urdf/model.urdf.j2", p)
         files[out / "model.config"] = render("sdf/model.config.j2", p, model=name)
         files[out / "uav_sim.yaml"] = render("uav_sim.yaml.j2", p)
+        if "tether" in p:
+            files[out / "payload.urdf"] = render("urdf/payload.urdf.j2", p)
     return files
 
-def write(root: Path) -> None:
-    for rel, text in render_all().items():
-        path = root / rel
-        if path.exists() and path.read_text() == text:
-            continue
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(text)
-        print(f"wrote {rel}")
-
-def check(root: Path) -> list[Path]:
-    """ Print a diff for every stal file and return their paths """
-    stale = []
-    for rel, text in render_all().items():
-        path = root / rel
-        old = path.read_text() if path.exists() else ""
-        if old != text:
-            stale.append(rel)
-            sys.stdout.writelines(difflib.unified_diff(
-                old.splitlines(keepends=True), text.splitlines(keepends=True),
-                fromfile=f"a/{rel}", tofile=f"b/{rel}"))
-    return stale
-
 def summary(p: dict) -> None:
-    d = derive(p)
+    d = drone.derive(p)
+    t = tether.derive(p)["tether"]
     print(f"[{p['name']}] kf={d['kf']:.4e} N/RPM^2  km={d['km']:.4e}  "
           f"motorConstant={d['motor_constant']:.4e} N/(rad/s)^2")
     print(f"[{p['name']}] hover={d['hover_velocity']:.0f} rad/s ({d['hover_rpm']:.0f} rpm, "
           f"{d['hover_rpm'] / d['noload_rpm']:.0%} of KV*Vbat)  "
           f"throttle={d['hover_throttle']:.3f}  max T/W={d['max_t2w']:.2f}")
+    if t:
+        print(f"[{p['name']}] tether: {t['count']} cables   L0={t['params']['rest_length']} m "
+              f"payload={t['payload']['mass']} kg   mass_eff={t['mass_eff']:.3f} kg")
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -171,14 +113,14 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.check:
-        stale = check(args.out)
+        stale = check(render_all(), args.out)
         if stale:
             print(f"{len(stale)} generated file(s) out of date. Run 'make generate'", file=sys.stderr)
             return 1
         print("generated files up to date")
         return 0
-
-    write(args.out)
+    
+    write(render_all(), args.out)
     summary(load_params())
 
     return 0

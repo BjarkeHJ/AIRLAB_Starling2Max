@@ -15,5 +15,5 @@ starling2max-generate = "starling2max.generate:main"
 [tool.setuptools]
 packages = ["starling2max"]
 
-[tool.setuptool.package-data]
-starling2max = ["templates/**/*.j2]
+[tool.setuptools.package-data]
+starling2max = ["templates/**/*.j2"]

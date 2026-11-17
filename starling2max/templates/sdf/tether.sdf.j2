@@ -1,0 +1,95 @@
+{% set pl = tether.payload %}
+<!-- slung payload: free body (no joint), held only by TetherPlugin.
+     Nested model so it gets its own OdometryPublisher (that plugin reports the
+     pose of the model it is attached to, i.e. its canonical link) -->
+<model name="{{ pl.model }}">
+<pose>{{ pl.spawn_pose | vec }}</pose>
+<link name="{{ pl.link }}">
+    <inertial>
+        <mass>{{ pl.mass | num }}</mass>
+        <inertia>
+            <ixx>{{ pl.inertia[0] | num }}</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>{{ pl.inertia[1] | num }}</iyy>
+            <iyz>0</iyz>
+            <izz>{{ pl.inertia[2] | num }}</izz>
+        </inertia>
+    </inertial>
+    <collision name="collision">
+        <geometry>
+            <box>
+                <size>
+                    {{ pl.size | vec }}
+                </size>
+            </box>
+        </geometry>
+    </collision>
+    {% for v in pl.visuals %}
+    <visual name="{{ v.name }}">
+        <pose>
+            {{ v.xyz | vec}}
+            {{ v.rpy | vec }}
+        </pose>
+        <geometry>
+            <box>
+                <size>
+                    {{ v.size | vec }}
+                </size>
+            </box>
+        </geometry>
+        <material>
+            <ambient>
+                {{ v.color | rgba }}
+            </ambient>
+            <diffuse>
+                {{ v.color | rgba }}
+            </diffuse>
+        </material>
+    </visual>
+    {% endfor %}
+</link>
+
+<plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+    <odom_topic>{{ pl.odom_topic }}</odom_topic>
+    <odom_frame>world</odom_frame>
+    <robot_base_frame>{{ pl.link }}</robot_base_frame>
+    <dimensions>3</dimensions>
+</plugin>
+</model>
+
+<plugin filename="TetherPlugin" name="tether_plugin::TetherPlugin">
+    <drone_link>base_link</drone_link>
+    <payload_link>{{ pl.scoped_link }}</payload_link>
+    {% for key, value in tether.params.items() %}
+    <{{ key }}>
+        {{ value | num }}
+    </{{ key }}>
+    {% endfor %}
+    {% for a, b in tether.cables %}
+    <cable>
+        <drone_attach>
+            {{ a | vec}}
+        </drone_attach>
+        <payload_attach>
+            {{ b | vec}}
+        </payload_attach>
+    </cable>
+    {% endfor %}
+</plugin>
+
+<plugin filename="TetherVisual" name="tether_plugin::TetherVisual">
+    <drone_link>base_link</drone_link>
+    <payload_link>{{ pl.scoped_link }}</payload_link>
+    <rest_length> {{ tether.params.rest_length | num }}</rest_length>
+    {% for a, b in tether.cables %}
+    <cable>
+        <drone_attach>
+            {{ a | vec}}
+        </drone_attach>
+        <payload_attach>
+            {{ b | vec}}
+        </payload_attach>
+    </cable>
+    {% endfor %}
+</plugin>

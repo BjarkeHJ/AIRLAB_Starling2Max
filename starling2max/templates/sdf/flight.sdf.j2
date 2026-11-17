@@ -27,7 +27,7 @@
         {% endfor %}
 
         <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
-            <odom_topic>{{ ground_truth_topic }}</odom_topic>
+            <odom_topic>{{ drone_odom_topic }}</odom_topic>
             <odom_frame>world</odom_frame>
             <robot_base_frame>base_link</robot_base_frame>
             <dimensions>3</dimensions>
@@ -40,5 +40,10 @@
         </frame>
         {% endfor %}
         {% endif %}
+
+        {% if tether %}
+        {% include "sdf/tether.sdf.j2" %}
+        {% endif %}
+
     </model>
 </sdf>

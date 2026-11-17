@@ -8,6 +8,6 @@ px4:
 spawn:
     z: 0.07
 sensors:
-    gt_odom:
+    drone_odom:
         type: odometry
         gz_topic: /starling2max/gt/odom

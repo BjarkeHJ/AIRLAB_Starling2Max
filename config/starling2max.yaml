@@ -37,7 +37,7 @@ gazebo:
   max_rot_velocity: 1000 # PX4 SIM_GZ_EC_MAX is limited to 1000
   min_rot_velocity: 150
   time_constants: {up: 0.0125, down: 0.025}
-  ground_truth_topic: /starling2max/gt/odom
+  drone_odom_topic: /starling2max/gt/odom
 
 px4:
   airframe_id: 4900

@@ -4,18 +4,11 @@
 
     <properties kf="{{ kf | num }}" km="{{ km | num }}"/>
 
-    <material> 
-        name="grey"<color 
-        rgba="{{ 'grey' | rgba }}"/>
+    {% for color in ("grey", "red", "green") %}
+    <material name="{{ color }}">
+        <color rgba="{{ color | rgba }}"/>
     </material>
-    <material>
-        name="green"<color 
-        rgba="{{ 'green' | rgba }}"/>
-    </material>
-    <material>
-        name="red"<color 
-        rgba="{{ 'red' | rgba }}"/>
-    </material>
+    {% endfor %}
 
     <link name="base_link">
         <inertial>
@@ -44,7 +37,7 @@
         <inertial>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <mass value="{{ prop_mass | num }}"/>
-            <inertia ixx="{{ prop_inertia[0] | num }}" ixy="0" ixz="0" iyy="{{ prop_inertia[1] | num }} iyz=0" izz="{{ prop_inertia[2] | num }}"/>
+            <inertia ixx="{{ prop_inertia[0] | num }}" ixy="0" ixz="0" iyy="{{ prop_inertia[1] | num }}" iyz="0" izz="{{ prop_inertia[2] | num }}"/>
         </inertial>
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>

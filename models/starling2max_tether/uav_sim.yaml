@@ -8,6 +8,10 @@ px4:
 spawn:
     z: 0.07
 sensors:
-    gt_odom:
+    drone_odom:
         type: odometry
-        gz_topic: /starling2max_tether/gt/odom
+        gz_topic: /starling2max_tether/drone/odom
+    payload_odom:
+        type: odometry
+        gz_topic: /starling2max_tether/payload/odom
+requires_plugins: [TetherPlugin, TetherVisual]

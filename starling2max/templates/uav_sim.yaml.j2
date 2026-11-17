@@ -8,6 +8,14 @@ px4:
 spawn:
     z: {{ spawn_z | num }}
 sensors:
-    gt_odom:
+    drone_odom:
         type: odometry
-        gz_topic: {{ ground_truth_topic }}
+        gz_topic: {{ drone_odom_topic }}
+    {% if tether %}
+    payload_odom:
+        type: odometry
+        gz_topic: {{ payload_odom_topic }}
+    {% endif %}
+{% if tether %}
+requires_plugins: [{{ tether.plugins | join(", ") }}]
+{% endif %}

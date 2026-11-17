@@ -1,10 +1,11 @@
 """ ModalAI Starling 2 Max simulation model: paths, spec, and Genesis entry point. """
 
 from pathlib import Path
-from .params import derive, load_params, model_names
+from .params import load_params, model_names
+from .drone import derive
 from .rotors import rotors_for
 
-__all__ = ["models_dir", "urdf_path", "sdf_path", "load_params", "derive", "model_names", "rotors_for", "genesis_morph"]
+__all__ = ["models_dir", "urdf_path", "sdf_path", "load_params", "derive", "model_names", "rotors_for", "payload_urdf_path", "tether_params"]
 
 PACKAGE = "starling2max_description"
 
@@ -19,15 +20,20 @@ def models_dir() -> Path:
         pass
     return Path(__file__).resolve().parent.parent / "models"
 
+def sdf_path(variant: str = "starling2max") -> Path:
+    return models_dir() / variant / "model.sdf"
+
 def urdf_path(variant: str = "starling2max") -> Path:
     path = models_dir() / variant / "model.urdf"
     if not path.is_file():
         raise FileNotFoundError(f"{path} (known models: {model_names()})")
     return path
 
-def sdf_path(variant: str = "starling2max") -> Path:
-    return models_dir() / variant / "model.sdf"
+def payload_urdf_path(variant: str = "starling2max_tether") -> Path:
+    return models_dir() / variant / "payload.urdf"
 
+def tether_params(variant: str = "starling2max_tether") -> dict:
+    return dict(load_params(variant)["tether"])
 
 
 

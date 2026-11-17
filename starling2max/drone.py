@@ -99,7 +99,11 @@ def derive(p: dict) -> dict:
     lo, hi = gz["min_rot_velocity"], gz["max_rot_velocity"]
 
     base_mass = body["mass"] - n * prop["mass"]
-    prop_izz = prop["mass"] * prop["radius"] ** 2 / 3.0  # thin blades: m R^2 / 3
+    # Isotropic on purpose
+    # Genesis applies propeller thrust in the prop link's principal-inertia frame
+    # ixx = iyy != izz re-sorts those axes so thrust points sideways. 
+    # Difference to the thin-rotor value is negligible.
+    prop_inertia = prop["mass"] * prop["radius"] ** 2 / 3.0  # thin blades: m R^2 / 3
     ratio = motor_constant / X500_MOTOR_CONSTANT
 
     return {
@@ -121,7 +125,8 @@ def derive(p: dict) -> dict:
         "base_mass": base_mass,
         "base_inertia": box_inertia(base_mass, *body["bbox"]),
         "prop_mass": prop["mass"],
-        "prop_inertia": (prop_izz / 2, prop_izz / 2, prop_izz),
+        "prop_inertia": (prop_inertia, prop_inertia, prop_inertia), 
+        # "prop_inertia": (prop_izz / 2, prop_izz / 2, prop_izz),
     }
 
 def px4_rotors(p: dict) -> list[dict]:
